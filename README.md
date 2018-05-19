@@ -141,7 +141,7 @@ This file can be used in _Ovito_ to render the simulation:
 
 ## Videos
 
-* [Simulation N° 1: Drain 1.0](https://youtu.be/ZKFEjTMVARc)
+* [Simulation N° 1: Drain 1.0]()
 
 ## Developers
 
