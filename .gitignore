@@ -30,6 +30,7 @@ target/
 *.drain
 *.flow
 *.json
+*.pressure
 *.state
 *.static
 *.txt

@@ -51,7 +51,7 @@ Receives a JSON file with the following format:
 {
     "output"            : "res/data/output",
     "delta"             : "0.0001",
-    "time"              : "15.0",
+    "time"              : "10.0",
     "fps"               : "50",
     "playbackSpeed"     : "1.0",
     "samplesPerSecond"  : "200",
@@ -70,9 +70,10 @@ Receives a JSON file with the following format:
     "a"                 : "2000.0",
     "b"                 : "0.08",
     "tau"               : "0.5",
-    "desiredSpeed"      : "3.0",
+    "desiredSpeed"      : "5.0",
     "breakRange"        : "2.5",
     "target"            : ["10.0", "0.0"],
+    "targetWidth"       : "0.42",
 
     "generator"         : "73604268647601935",
     "n"                 : "20",
@@ -80,8 +81,8 @@ Receives a JSON file with the following format:
     "width"             : "20.0",
     "drain"             : "1.2",
 
-    "window"            : "1.0",
-    "flowRate"          : "0.1"
+    "window"            : "5.0",
+    "flowRate"          : "0.01"
 }
 
 ```
@@ -108,6 +109,17 @@ vector of each particle:
 ...
 ```
 
+### Pressure Evolution (_\*.pressure_)
+
+The pressure of the particles (_i.e._, the magnitude of the collisions and the
+social forces over normal direction, divided by the perimeter of the body).
+This has the same time-step like the simulation file:
+
+```
+<pressure>
+...
+```
+
 ### Flow Rate File (_\*.drain_)
 
 This file contains the complete drain (_i.e._, the ID of a particle
@@ -120,7 +132,7 @@ drained at a certain time).
 
 ### Windowed Flow Rate File (_\*.flow_)
 
-This is the windowed flow per unit of temporal step. The units are in
+This is the slided-windowed flow per unit of temporal step. The units are in
 _[particles/second]_.
 
 ```
@@ -135,13 +147,18 @@ This file can be used in _Ovito_ to render the simulation:
 ```
 <N>
 <t0>
-<x> <y> <radius> <speed>
+<x> <y> <radius> <speed> <pressure>
 ...
 ```
 
 ## Videos
 
-* [Simulation N° 1: Drain 1.0]()
+* [Simulation N° 1: Desired Speed 0.5]()
+* [Simulation N° 2: Desired Speed 1.0]()
+* [Simulation N° 3: Desired Speed 2.0]()
+* [Simulation N° 4: Desired Speed 3.0]()
+* [Simulation N° 5: Desired Speed 4.0]()
+* [Simulation N° 6: Desired Speed 5.0]()
 
 ## Developers
 

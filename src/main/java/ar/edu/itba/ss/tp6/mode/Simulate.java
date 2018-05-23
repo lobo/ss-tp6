@@ -1,6 +1,9 @@
 
 	package ar.edu.itba.ss.tp6.mode;
 
+	import java.io.FileWriter;
+	import java.io.IOException;
+	import java.io.PrintWriter;
 	import java.util.List;
 
 	import ar.edu.itba.ss.tp4.core.MassiveParticleFactory;
@@ -13,6 +16,7 @@
 	import ar.edu.itba.ss.tp5.core.Generator;
 	import ar.edu.itba.ss.tp5.core.GranularParticle;
 	import ar.edu.itba.ss.tp5.core.GranularParticleFactory;
+	import ar.edu.itba.ss.tp5.core.ParticleAggregator;
 	import ar.edu.itba.ss.tp6.core.field.CrowdForce;
 	import ar.edu.itba.ss.tp6.interfaces.Configuration;
 	import ar.edu.itba.ss.tp6.interfaces.Mode;
@@ -21,6 +25,11 @@
 	import ar.edu.itba.ss.tp6.io.StaticFile;
 
 	public class Simulate implements Mode {
+
+		protected final ParticleAggregator aggregator
+			= ParticleAggregator.getInstance();
+
+		protected PrintWriter pressure;
 
 		@Override
 		public void run(final Configuration configuration) {
@@ -34,6 +43,8 @@
 							final double Δt = config.getDelta();
 							final double Δs = 1.0 / config.getSamplesPerSecond();
 							final long Δ = Δs < Δt? 1 : Math.round(Δs/Δt);
+							this.pressure = new PrintWriter(
+									new FileWriter(config.getOutput() + ".pressure"));
 							TimeDrivenSimulation.of(
 									buildIntegrator(
 										config,
@@ -55,14 +66,22 @@
 									if (Math.round(time/Δt) % Δ == 0) {
 										output.write(time, state);
 										flow.write(time, state);
+										savePressure(state);
 									}
 								})
 								.build()
 								.run();
+							this.pressure.close();
+							System.out.println(
+									"\tLas presiones se almacenaron con éxito.");
 						}
 						catch (final ClassNotFoundException exception) {
 							System.out.println(
 								"El integrador es desconocido. Especifique otro.");
+						}
+						catch (final IOException exception) {
+							System.out.println(
+								"No se puede generar el archivo de presiones.");
 						}
 						System.out.println(
 							"\tLos eventos de salida se almacenaron con éxito.");
@@ -72,6 +91,14 @@
 						"\tLa simulación fue almacenada con éxito.");
 					output.close();
 				});
+		}
+
+		protected <T extends GranularParticle> void savePressure(final List<T> state) {
+			final int particles = state.size() - 2; // Siempre hay drenaje!
+			final double [] pressures = aggregator.getAggregation("pressure");
+			for (int i = 0; i < particles; ++i) {
+				pressure.println(pressures[i]);
+			}
 		}
 
 		protected static <T extends GranularParticle> Integrator<T> buildIntegrator(

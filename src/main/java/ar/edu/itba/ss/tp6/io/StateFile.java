@@ -17,6 +17,7 @@
 
 		protected StateFile(final Configuration configuration)
 				throws IOException {
+			
 			final ar.edu.itba.ss.tp6.config.Configuration config
 				= (ar.edu.itba.ss.tp6.config.Configuration) configuration;
 			this.output = new PrintWriter(

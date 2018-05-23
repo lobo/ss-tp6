@@ -15,20 +15,22 @@
 		protected final double desiredSpeed;
 		protected final double τ;
 		protected final double exit;
+		protected final double Xl;
+		protected final double Xr;
 
 		public DrivenForce(final Configuration configuration) {
 			this.target = configuration.getTarget();
 			this.desiredSpeed = configuration.getDesiredSpeed();
 			this.τ = configuration.getTau();
 			this.exit = 0.1 * configuration.getHeight();
+			this.Xl = target.getX() - 0.5 * configuration.getTargetWidth();
+			this.Xr = Xl + configuration.getTargetWidth();
 		}
 
 		@Override
 		public Vector apply(final List<T> state, final T body) {
 			if (0.0 < body.getRadius()) {
-				final Vector dynamicTarget = exit < body.getY()?
-						target : Vector.of(body.getX(), -Math.abs(body.getY()) - 1.0);
-				return dynamicTarget
+				return getTarget(body)
 						.subtract(Vector.of(body.getX(), body.getY()))
 						.versor()
 						.multiplyBy(desiredSpeed)
@@ -71,5 +73,15 @@
 		@Override
 		public double potentialEnergy(final T body) {
 			return 0.0;
+		}
+
+		protected Vector getTarget(final T body) {
+			if (exit < body.getY()) {
+				final double X = body.getX() < Xl?
+					Xl : (Xr < body.getX()? Xr : body.getX());
+				return Vector.of(X, target.getY());
+			}
+			else return Vector
+					.of(body.getX(), -Math.abs(body.getY()) - 1.0);
 		}
 	}

@@ -50,6 +50,7 @@
 		protected double desiredSpeed = 0.8;
 		protected double breakRange = 2.5;
 		protected double [] target = {10.0, -10.0};
+		protected double targetWidth = 0.42;
 
 		public String getOutput() {
 			return output;
@@ -163,6 +164,10 @@
 			return Vector.of(target[0], 0.1 * height + target[1]);
 		}
 
+		public double getTargetWidth() {
+			return targetWidth;
+		}
+
 		@Override
 		public String toString() {
 			return new StringBuilder(768)
@@ -187,6 +192,7 @@
 					.append("\tDesired Speed: " + desiredSpeed + " [m/s]\n")
 					.append("\tSocial Force Range: " + breakRange + " [m]\n")
 					.append("\tTarget: (" + getTarget().getX() + ", " + target[1] + ") [m]\n")
+					.append("\tTarget Width: " + targetWidth + " [m]\n")
 					.append("\tGenerator Seed: " + generator + "\n")
 					.append("\tN: " + n + " particles\n")
 					.append("\tHeight: " + height + " [m]\n")

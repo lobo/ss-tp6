@@ -1,7 +1,7 @@
 
 	package ar.edu.itba.ss.tp6.io;
 
-	import static java.util.stream.Collectors.groupingBy;
+	import static java.util.stream.Collectors.toList;
 
 	import java.io.FileNotFoundException;
 	import java.io.FileWriter;
@@ -9,7 +9,8 @@
 	import java.io.PrintWriter;
 	import java.nio.file.Files;
 	import java.nio.file.Paths;
-	import java.util.Stack;
+	import java.util.List;
+	import java.util.stream.IntStream;
 
 	import ar.edu.itba.ss.tp6.interfaces.Configuration;
 
@@ -19,31 +20,23 @@
 				= (ar.edu.itba.ss.tp6.config.Configuration) configuration;
 			final String filename = config.getOutput() + ".drain";
 			final double maxTime = config.getTime();
-			final double window = config.getFlowRate();
 			try (final PrintWriter output = new PrintWriter(
 					new FileWriter(config.getOutput() + ".flow"))) {
-				final Stack<Integer> lastStep = new Stack<>();
-				lastStep.push(0);
-				Files.lines(Paths.get(filename))
+				final double window = config.getWindow();
+				final double rate = config.getFlowRate();
+				final List<Double> events = Files.lines(Paths.get(filename))
 					.map(line -> Double.parseDouble(line.split("\\s")[0]))
-					.collect(groupingBy(time -> (int) Math.ceil((time/window))))
-					.entrySet()
-					.stream()
-					.sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
-					.forEachOrdered(entry -> {
-						final int step = entry.getKey();
-						final double time = step * window;
-						for (int i = lastStep.pop(); i < step; ++i) {
-							output.write((i * window) + " " + 0 + "\n");
-						}
-						output.write(time + " " +
-								(entry.getValue().size()/window) + "\n");
-						lastStep.push(step + 1);
+					.collect(toList());
+				IntStream.rangeClosed(0, (int) Math.ceil((maxTime - window)/rate))
+					.forEachOrdered(k -> {
+						final double Δ = k * rate;
+						final double time = window + Δ;
+						final long discharges = events.stream()
+							.filter(t -> Δ <= t && t < time)
+							.mapToDouble(t -> t)
+							.count();
+						output.write(time + " " + (discharges/window) + "\n");
 					});
-				final int step = (int) Math.ceil((maxTime/window));
-				for (int i = lastStep.pop(); i <= step; ++i) {
-					output.write((i * window) + " " + 0 + "\n");
-				}
 				return true;
 			}
 			catch (final FileNotFoundException exception) {

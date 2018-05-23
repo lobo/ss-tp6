@@ -15,6 +15,8 @@
 		protected final NeighbourCache cache;
 		protected final double A;
 		protected final double B;
+		protected final double drain;
+		protected final Vector space;
 
 		public SocialForce(final Configuration configuration) {
 			this.cache = NeighbourCache.ofDeep(2)
@@ -23,19 +25,29 @@
 					.build();
 			this.A = configuration.getA();
 			this.B = configuration.getB();
+			this.space = Vector.of(
+				configuration.getWidth(),
+				configuration.getHeight()
+			);
+			this.drain = configuration.getDrain();
 		}
 
 		@Override
 		public Vector apply(final List<T> state, final T body) {
-			// Contra las paredes también?
-			return cache.neighbours(state)
+			final double leftξ0 = leftξ0(body);
+			final double rightξ0 = rightξ0(body);
+			final double floorξ0 = floorξ0(body);
+			return Vector.of(A * Math.exp(leftξ0/B), 0.0)
+					.add(Vector.of(-A * Math.exp(rightξ0/B), 0.0))
+					.add(Vector.of(0.0, A * Math.exp(floorξ0/B)))
+					.add(cache.neighbours(state)
 					.get(body)
 					.stream()
 					.map(p -> {
 						final double ξ0 = -body.distance(p);
 						return body.normal(p).multiplyBy(-A * Math.exp(ξ0/B));
 					})
-					.reduce(Vector.ZERO, (F1, F2) -> F1.add(F2));
+					.reduce(Vector.ZERO, (F1, F2) -> F1.add(F2)));
 		}
 
 		@Override
@@ -71,5 +83,23 @@
 		@Override
 		public double potentialEnergy(final T body) {
 			return 0.0;
+		}
+
+		protected double leftξ0(final T body) {
+			return body.getRadius() - Math.abs(body.getX());
+		}
+
+		protected double rightξ0(final T body) {
+			return body.getRadius() - Math.abs(space.getX() - body.getX());
+		}
+
+		protected double floorξ0(final T body) {
+			final double base = 0.1 * space.getY();
+			final double drain0 = 0.5 * (space.getX() - drain);
+			if (drain0 < body.getX() && body.getX() < drain0 + drain)
+				return Double.NEGATIVE_INFINITY;
+			else if (body.getY() < (base - body.getRadius()))
+				return Double.NEGATIVE_INFINITY;
+			else return body.getRadius() - Math.abs(base - body.getY());
 		}
 	}

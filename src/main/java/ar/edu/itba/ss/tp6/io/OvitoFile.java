@@ -26,6 +26,7 @@
 			try (
 				final Scanner properties = new Scanner(new File(filename + ".static"));
 				final Scanner input = new Scanner(new File(filename + ".state"));
+				final Scanner pressures = new Scanner(new File(filename + ".pressure"));
 				final PrintWriter output = new PrintWriter(new FileWriter(filename + ".xyz"));
 			) {
 				final List<MassiveParticle> state = getState(properties);
@@ -44,13 +45,17 @@
 						}
 						// Chunk...
 						for (int i = 0; i < N; ++i) {
-							output.write(getRow(state.get(i), input.nextLine()) + "\n");
+							output.write(getRow(
+									state.get(i),
+									input.nextLine(),
+									pressures.nextLine()) + "\n");
 						}
 					}
 					else {
 						// Ignore...
 						for (int i = 0; i < N; ++i) {
 							input.nextLine();
+							pressures.nextLine();
 						}
 					}
 					line += N;
@@ -78,7 +83,7 @@
 		}
 
 		protected static String getRow(
-				final MassiveParticle state, final String line) {
+				final MassiveParticle state, final String line, final String pressure) {
 			final String [] tokens = line.split("\\s");
 			final double speed = Math.hypot(
 					Double.parseDouble(tokens[2]),
@@ -91,6 +96,8 @@
 					.append(state.getRadius())
 					.append(" ")
 					.append(speed)
+					.append(" ")
+					.append(pressure)
 					.toString();
 		}
 
