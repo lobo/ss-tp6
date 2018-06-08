@@ -158,7 +158,6 @@ This file can be used in _Ovito_ to render the simulation:
 * [Simulation N° 3: Desired Speed 2.0]()
 * [Simulation N° 4: Desired Speed 3.0]()
 * [Simulation N° 5: Desired Speed 4.0]()
-* [Simulation N° 6: Desired Speed 5.0]()
 
 ## Developers
 
