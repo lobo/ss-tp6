@@ -153,11 +153,12 @@ This file can be used in _Ovito_ to render the simulation:
 
 ## Videos
 
-* [Simulation N° 1: Desired Speed 0.5]()
-* [Simulation N° 2: Desired Speed 1.0]()
-* [Simulation N° 3: Desired Speed 2.0]()
-* [Simulation N° 4: Desired Speed 3.0]()
-* [Simulation N° 5: Desired Speed 4.0]()
+* [Simulation N° 1: Desired Speed 0.5](https://www.youtube.com/watch?v=LQ-BC8Juc58)
+* [Simulation N° 2: Desired Speed 1.0](https://youtu.be/MZHWmk2ng3A)
+* [Simulation N° 3: Desired Speed 2.0](https://youtu.be/T396VaRHlZ4)
+* [Simulation N° 4: Desired Speed 3.0](https://youtu.be/6XAavGodexw)
+* [Simulation N° 5: Desired Speed 4.0](https://youtu.be/7EARQdVfIgg)
+* [Simulation N° 5: Desired Speed 4.0 with A=0](https://www.youtube.com/watch?v=TC9T83Y2kj0)
 
 ## Developers
 
